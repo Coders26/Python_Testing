@@ -1,41 +1,97 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Summary | GUDLFT Registration</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px 10px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        header {
+            background-color: #343a40;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center; /* Aligner le texte au centre */
+            margin-bottom: 20px;
+            width: 100%;
+            top: 0;
+            z-index: 999;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex; /* Utiliser Flexbox */
+            justify-content: space-between; /* Espacement entre les éléments */
+            align-items: center; /* Centrer verticalement */
+        }
+
+        header h2 {
+            margin: 0;
+        }
+
+        .container {
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(90, 90, 90, 90);
+            border-radius: 40px;
+            padding: 20px;
+        }
+
+        .list-group-item {
+            border: none;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background-color: #001f3f;
+            border-color: #001f3f;
+        }
+
+        .btn-primary:hover {
+            background-color: #003366;
+            border-color: #003366;
+        }
+
+        .date {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-        <h2>Welcome, {{club['email']}} </h2><a href="{{url_for('logout')}}">Logout</a>
+    <header>
+        <h2>Welcome, {{ club['email'] }}</h2>
+        <a href="{{ url_for('logout') }}" class="btn btn-primary">Logout</a>
+    </header>
 
-   <div class="container mt-3">
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul class="list-group">
-                {% for message in messages %}
-                    <li class="list-group-item">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
-    <p>Points available: {{ club['points'] }}</p>
-    <h3>Competitions:</h3>
-    <ul class="list-group">
-        {% for comp in competitions %}
-            <li class="list-group-item">
-                {{ comp['name'] }}<br>
-                Date: {{ comp['date'] }}<br>
-                Number of Places: {{ comp['numberOfPlaces'] }}
-                {% if comp['numberOfPlaces']|int > 0 %}
-                    <a href="{{ url_for('book', competition=comp['name'], club=club['name']) }}" class="btn btn-primary">Book Places</a>
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
-</div>
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="list-group">
+                    {% for message in messages %}
+                        <li class="list-group-item">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
 
-    </ul>
-</div>
-
-
+        <p>Points available: {{ club['points'] }}</p>
+        <h3>Competitions:</h3>
+        <ul class="list-group">
+            {% for comp in competitions %}
+                <li class="list-group-item">
+                    {{ comp['name'] }}<br>
+                    <span class="date">Date: {{ comp['date'] }}</span><br>
+                    Number of Places: {{ comp['numberOfPlaces'] }}
+                    {% if comp['numberOfPlaces']|int > 0 %}
+                        <a href="{{ url_for('book', competition=comp['name'], club=club['name']) }}" class="btn btn-primary">Book Places</a>
+                    {% endif %}
+                </li>
+                <hr> <!-- Ligne horizontale -->
+            {% endfor %}
+        </ul>
+    </div>
 </body>
 </html>
