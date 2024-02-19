@@ -9,14 +9,14 @@ def loadClubs():
          return listOfClubs
 
 
-def loadCompetitions():
+def loadCompetitions(today=None):
     with open('competitions.json') as comps:
-         listOfCompetitions = json.load(comps)['competitions']
-         if today is not None:
-             comp = [competition for competition in listOfCompetitions if
-                     datetime.strptime(competition['date'], "%Y-%m-%d %H:%M:%S") >= today]
-             return comp
-         return listOfCompetitions
+        listOfCompetitions = json.load(comps)['competitions']
+        if today is not None:
+            comp = [competition for competition in listOfCompetitions if
+                    datetime.strptime(competition['date'], "%Y-%m-%d %H:%M:%S") >= today]
+            return comp
+        return listOfCompetitions
 
 
 app = Flask(__name__)
@@ -28,11 +28,15 @@ clubs = loadClubs()
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    comp = [competition for competition in competitions if
+            datetime.strptime(competition['date'], "%Y-%m-%d %H:%M:%S") >= today]
+    return render_template('index.html', clubs=clubs, competitions=comp)
 
 
 @app.route('/showSummary',methods=['POST'])
 def showSummary():
+    comp = [competition for competition in competitions if
+            datetime.strptime(competition['date'], "%Y-%m-%d %H:%M:%S") >= today]
     email = request.form.get('email')
     if not email:
         flash('Veuillez entrer votre adresse mail!', 'error')
@@ -42,7 +46,7 @@ def showSummary():
         flash('Aucun club trouvé avec cette adresse e-mail.', 'error')
         return redirect(url_for('index'))
     club = matching_clubs[0]
-    return render_template('welcome.html', club=club, competitions=competitions)
+    return render_template('welcome.html', club=club, competitions=comp)
 
 
 @app.route('/book/<competition>/<club>')
