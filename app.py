@@ -49,15 +49,29 @@ def book(competition,club):
         return render_template('welcome.html', club=club, competitions=competitions)
 
 
-@app.route('/purchasePlaces',methods=['POST'])
+@app.route('/purchasePlaces', methods=['POST'])
 def purchasePlaces():
-    competition = [c for c in competitions if c['name'] == request.form['competition']][0]
-    club = [c for c in clubs if c['name'] == request.form['club']][0]
+    competition_name = request.form['competition']
+    club_name = request.form['club']
     placesRequired = int(request.form['places'])
-    competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
-    flash('Great-booking complete!')
+    competition = [c for c in competitions if c['name'] == competition_name][0]
+    club = [c for c in clubs if c['name'] == club_name][0]
+    if int(club['points']) < placesRequired:
+        flash('Point insuffisant!')
+        return render_template('welcome.html', club=club, competitions=competitions)
+    if int(competition['numberOfPlaces']) < placesRequired:
+        flash('Nombre de places insuffisant pour la compétition {}!'.format(competition_name))
+        return render_template('welcome.html', club=club, competitions=competitions)
+    if 'places_reserved_' + competition_name not in club:
+        club['places_reserved_' + competition_name] = 0
+    if club['places_reserved_' + competition_name] + placesRequired > 12:
+        flash('Nombre maximal de places réservées atteint pour la compétition {}!'.format(competition_name))
+        return render_template('welcome.html', club=club, competitions=competitions)
+    club['points'] = int(club['points']) - placesRequired
+    competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - placesRequired
+    club['places_reserved_' + competition_name] += placesRequired
+    flash('Réservation réussie pour la compétition {}!'.format(competition_name))
     return render_template('welcome.html', club=club, competitions=competitions)
-
 
 # TODO: Add route for points display
 

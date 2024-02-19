@@ -6,12 +6,18 @@
 </head>
 <body>
     <h2>{{competition['name']}}</h2>
-    Places available: {{competition['numberOfPlaces']}}
+      <div class="container mt-5">
+    <h2>{{ competition['name'] }}</h2>
+    <p>Places available: {{ competition['numberOfPlaces'] }}</p>
     <form action="/purchasePlaces" method="post">
-        <input type="hidden" name="club" value="{{club['name']}}">
-        <input type="hidden" name="competition" value="{{competition['name']}}">
-        <label for="places">How many places?</label><input type="number" name="places" id=""/>
-        <button type="submit">Book</button>
+        <input type="hidden" name="club" value="{{ club['name'] }}">
+        <input type="hidden" name="competition" value="{{ competition['name'] }}">
+        <div class="form-group">
+            <label for="places">How many places?</label>
+            <input type="number" class="form-control" name="places" id="places" min="0" max="12" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Book</button>
     </form>
+</div>
 </body>
 </html>
